@@ -83,5 +83,14 @@ class MyTestCase(unittest.TestCase):
         self.assertIn(funcionario, self.empresa.dicionario_projetos[1])
         self.assertIn(funcionario, self.empresa.dicionario_projetos[2])
 
+    def test_associar_funcionario_a_projeto_inexistente(self):
+        funcionario = Funcionario("Carlos")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.assertRaises(KeyError, self.empresa.atribuir_funcionario_a_projeto, 1, 1)
+
+    def test_associar_funcionario_inexistente_a_projeto(self):
+        self.empresa.criar_projeto("Refatorar Código")
+        self.assertRaises(IndexError, self.empresa.atribuir_funcionario_a_projeto, 1, 1)
+
 if __name__ == '__main__':
     unittest.main()
