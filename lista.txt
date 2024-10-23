@@ -18,5 +18,7 @@
 
 10 - verificar a associação de um funcionário a um projeto
 
-11 - 
+11 - verificar a criação de múltiplos projetos
+
+12 - 
 
