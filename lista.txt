@@ -12,4 +12,6 @@
 
 7 - verificar a adição de dois funcionários à empresa com nomes iguais
 
-8 - 
+8 - verificar a adição de um funcionário já existente na empresa
+
+9 - 
