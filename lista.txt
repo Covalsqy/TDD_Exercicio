@@ -24,5 +24,7 @@
 
 13 - verificar a associação de um funcionário a dois projetos, um funcionário para ambos os projetos
 
-14 - 
+14 - verficar a exceção de se adicionar um funcionário a um projeto inexistente
+
+15 - verficar a exceção de se adicionar um funcionário inxestente a um projeto
 
