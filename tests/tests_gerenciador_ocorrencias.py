@@ -12,6 +12,11 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNotNone(funcionario)
         self.assertEqual(funcionario.nome, "Arthur")
 
+    def test_associar_funcionario_a_empresa(self):
+        empresa = Empresa("W")
+        funcionario = Funcionario("João")
+        empresa.adicionar_funcionario(funcionario)
+        self.assertEqual(empresa.get_funcionarios()[0].nome, funcionario.get_nome())
 
 if __name__ == '__main__':
     unittest.main()
