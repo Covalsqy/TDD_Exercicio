@@ -5,9 +5,6 @@ class Empresa:
         self.lista_projetos = []
         self.dicionario_projetos = {}
 
-    def get_nome(self):
-        return self.nome
-
     def get_funcionarios(self):
         return self.lista_funcionarios
 
@@ -52,6 +49,3 @@ class Projeto:
 
     def get_titulo(self):
         return self.titulo
-
-    def get_id(self):
-        return self.id
