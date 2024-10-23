@@ -20,5 +20,9 @@
 
 11 - verificar a criação de múltiplos projetos
 
-12 - 
+12 - verificar a associação de dois funcionários a dois projetos, um funcionário para cada projeto
+
+13 - verificar a associação de um funcionário a dois projetos, um funcionário para ambos os projetos
+
+14 - 
 
