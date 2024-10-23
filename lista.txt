@@ -16,4 +16,7 @@
 
 9 - verificar a criação de um projeto na empresa
 
+10 - verificar a associação de um funcionário a um projeto
+
+11 - 
 
