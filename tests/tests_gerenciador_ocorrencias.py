@@ -46,12 +46,42 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_projeto("Desenvolver TDD")
         self.assertEqual(self.empresa.get_projetos()[0].get_titulo(), "Desenvolver TDD")
 
+    def test_criar_dois_projetos(self):
+        self.empresa.criar_projeto("Treinamento")
+        self.empresa.criar_projeto("Refatoramento Código")
+        self.assertEqual(self.empresa.get_projetos()[0].get_titulo(), "Treinamento")
+        self.assertEqual(self.empresa.get_projetos()[1].get_titulo(), "Refatoramento Código")
+
     def test_associar_funcionario_a_projeto(self):
         funcionario = Funcionario("Felipe")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.criar_projeto("Fabricar Peças")
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
         self.assertIn(funcionario, self.empresa.dicionario_projetos[1])
+
+    def test_associar_dois_funcionarios_a_dois_projetos(self):
+        funcionario1 = Funcionario("Felipe")
+        funcionario2 = Funcionario("Francisco")
+        self.empresa.adicionar_funcionario(funcionario1)
+        self.empresa.adicionar_funcionario(funcionario2)
+        self.empresa.criar_projeto("Fabricar Peças")
+        self.empresa.criar_projeto("Encomenda")
+        self.empresa.atribuir_funcionario_a_projeto(1, 2)
+        self.empresa.atribuir_funcionario_a_projeto(2, 1)
+        self.assertIn(funcionario1, self.empresa.dicionario_projetos[2])
+        self.assertIn(funcionario2, self.empresa.dicionario_projetos[1])
+        self.assertNotIn(funcionario2, self.empresa.dicionario_projetos[2])
+        self.assertNotIn(funcionario1, self.empresa.dicionario_projetos[1])
+
+    def test_associar_um_funcionario_a_dois_projetos(self):
+        funcionario = Funcionario("Pedro")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.criar_projeto("Refatorar Código")
+        self.empresa.criar_projeto("Especificar Requisitos")
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.atribuir_funcionario_a_projeto(1, 2)
+        self.assertIn(funcionario, self.empresa.dicionario_projetos[1])
+        self.assertIn(funcionario, self.empresa.dicionario_projetos[2])
 
 if __name__ == '__main__':
     unittest.main()
