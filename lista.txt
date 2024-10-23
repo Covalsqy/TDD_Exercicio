@@ -2,3 +2,6 @@
 
 2 - verificar o nome da empresa criada
 
+3 - verificar a criação de um funcionario 
+
+4 - verificar o nome do funcionário criado
