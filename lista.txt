@@ -5,3 +5,7 @@
 3 - verificar a criação de um funcionario 
 
 4 - verificar o nome do funcionário criado
+
+5 - verificar a adição de um funcionário à empresa
+
+6 - 
