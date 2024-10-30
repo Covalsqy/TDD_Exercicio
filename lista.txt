@@ -52,3 +52,4 @@
 
 27- modificar prioridade de ocorrência fechada
 
+28- criar ocorrência associada a um funcionário inexistente
