@@ -32,21 +32,23 @@
 
 17- criar ocorrência associada a projeto
 
-18- fechar ocorrência
+18- criar ocorrência de um projeto inexistente
 
-19- fechar ocorrência já fechada
+19- fechar ocorrência
 
-20- alterar responsável por ocorrência aberta
+20- fechar ocorrência já fechada
 
-21- alterar responsável por ocorrência fechada
+21- alterar responsável por ocorrência aberta
 
-22- tornar funcionário responsável por 2 ocorrências
+22- alterar responsável por ocorrência fechada
 
-23- tornar funcionário responsável por mais de 10 ocorrências abertas
+23- tornar funcionário responsável por 2 ocorrências
 
-24- tornar funcionário responsável por mais de 10 ocorrências fechadas
+24- tornar funcionário responsável por mais de 10 ocorrências abertas
 
-25- modificar prioridade de ocorrência aberta
+25- tornar funcionário responsável por mais de 10 ocorrências fechadas
 
-26- modificar prioridade de ocorrência fechada
+26- modificar prioridade de ocorrência aberta
+
+27- modificar prioridade de ocorrência fechada
 
