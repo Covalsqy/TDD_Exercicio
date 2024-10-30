@@ -54,4 +54,4 @@
 
 28- criar ocorrência associada a um funcionário inexistente
 
-29- verficar se a dupla funcionario e projeto associados está associada à mesma ocorrência
+29- verficar se o funcionario associado à ocorrência está associado ao mesmo projeto da ocorrência
