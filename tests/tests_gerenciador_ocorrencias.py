@@ -135,16 +135,36 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_projeto("TDD")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
-        self.empresa.get_ocorrencia("1_1").fechar()
-        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_estado(), "FECHADO")
+        self.empresa.fechar_ocorrencia("1_1")
+        self.assertEqual(self.empresa.get_estado_ocorrencia("1_1"), "FECHADO")
 
     def test_fechar_ocorrencia_fechada(self):
         funcionario = Funcionario("Greg")
         self.empresa.criar_projeto("TDD")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
-        self.empresa.get_ocorrencia("1_1").fechar()
-        self.assertRaises(Exception, self.empresa.get_ocorrencia("1_1").fechar)
+        self.empresa.fechar_ocorrencia("1_1")
+        self.assertRaises(Exception, self.empresa.fechar_ocorrencia)
+
+    def test_alterar_responsavel_ocorrencia_aberta(self):
+        funcionario = Funcionario("Greg")
+        funcionario2 = Funcionario("Renato")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.adicionar_funcionario(funcionario2)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "BAIXA", "Concertar impressora")
+        self.empresa.trocar_responsavel_ocorrencia("1_1", 2)
+        self.assertEqual(self.empresa.get_responsavel("1_1"), funcionario2)
+
+    def test_alterar_responsavel_ocorrencia_fechada(self):
+        funcionario = Funcionario("Greg")
+        funcionario2 = Funcionario("Renato")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.adicionar_funcionario(funcionario2)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "BAIXA", "Concertar impressora")
+        self.empresa.fechar_ocorrencia("1_1")
+        self.assertRaises(Exception, self.empresa.trocar_responsavel_ocorrencia, "1_1", 2)
 
 if __name__ == '__main__':
     unittest.main()

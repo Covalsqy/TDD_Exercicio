@@ -18,6 +18,12 @@ class Empresa:
     def get_ocorrencia(self, chave):
         return self.dicionario_ocorrencias[chave]
 
+    def get_responsavel(self, chave):
+        return self.get_ocorrencia(chave).get_responsavel()
+
+    def get_estado_ocorrencia(self, chave):
+        return self.get_ocorrencia(chave).get_estado()
+
     def adicionar_funcionario(self, f):
         if f not in self.lista_funcionarios:
             f.id = len(self.lista_funcionarios) + 1
@@ -41,6 +47,16 @@ class Empresa:
         chave = str(id_p) + "_" + str(len(self.dicionario_ocorrencias) + 1)
         nova_o = Ocorrencia(self.get_funcionario(id_f), tipo, prioridade, resumo, chave)
         self.dicionario_ocorrencias[chave] = nova_o
+
+    def fechar_ocorrencia(self, chave):
+        self.dicionario_ocorrencias[chave].fechar()
+
+    def trocar_responsavel_ocorrencia(self, chave_o, novo_res):
+        ocorrencia = self.get_ocorrencia(chave_o)
+        if ocorrencia.get_estado() == "ABERTO":
+            ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
+        else:
+            raise Exception("Não pode alterar responsável de ocorrência fechada")
 
 class Funcionario:
     def __init__(self, name):
@@ -93,3 +109,6 @@ class Ocorrencia:
             self.estado = "FECHADO"
         else:
             raise Exception("Ocorrência já foi fechada")
+
+    def trocar_responsavel(self, novo_res):
+        self.responsavel = novo_res
