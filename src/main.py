@@ -24,6 +24,9 @@ class Empresa:
     def get_estado_ocorrencia(self, chave):
         return self.get_ocorrencia(chave).get_estado()
 
+    def get_prioridade_ocorrencia(self, chave):
+        return self.get_ocorrencia(chave).get_prioridade()
+
     def adicionar_funcionario(self, f):
         if f not in self.lista_funcionarios:
             f.id = len(self.lista_funcionarios) + 1
@@ -70,6 +73,12 @@ class Empresa:
                     ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
                 else:
                     raise Exception("Não pode alterar responsável de ocorrência fechada")
+
+    def alterar_prioridade(self, chave, p):
+        if self.get_ocorrencia(chave).get_estado() == "ABERTO":
+            self.get_ocorrencia(chave).set_prioridade(p)
+        else:
+            raise Exception("Não pode alterar prioridade de ocorrencia fechada")
 
 class Funcionario:
     def __init__(self, name):
@@ -138,3 +147,6 @@ class Ocorrencia:
         self.responsavel.decrease_count()
         self.responsavel = novo_res
         self.responsavel.increase_count()
+
+    def set_prioridade(self, p):
+        self.prioridade = p

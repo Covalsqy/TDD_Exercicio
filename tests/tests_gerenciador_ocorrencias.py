@@ -276,5 +276,23 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(self.empresa.get_funcionario(1).get_count(), 3)
         self.assertEqual(self.empresa.get_funcionario(2).get_count(), 0)
 
+    def test_alterar_prioridade_ocorrencia_aberta(self):
+        funcionario = Funcionario("Peter")
+        self.empresa.criar_projeto("Psi")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.criar_ocorrencia(1, 1, "Tarefa", "BAIXA", "Prioridade Incorreta")
+        self.empresa.alterar_prioridade("1_1", "ALTA")
+        self.assertEqual(self.empresa.get_prioridade_ocorrencia("1_1"), "ALTA")
+
+    def test_alterar_prioridade_ocorrencia_fechada(self):
+        funcionario = Funcionario("Peter")
+        self.empresa.criar_projeto("Psi")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.criar_ocorrencia(1, 1, "Tarefa", "BAIXA", "Prioridade Incorreta")
+        self.empresa.fechar_ocorrencia("1_1")
+        self.assertRaises(Exception, self.empresa.alterar_prioridade,"1_1", "ALTA")
+
 if __name__ == '__main__':
     unittest.main()
