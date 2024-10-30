@@ -112,5 +112,23 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(self.empresa.get_ocorrencia("1_1").get_tipo(), "BUG")
         self.assertEqual(self.empresa.get_ocorrencia("1_1").get_chave(), "1_1")
 
+    def test_criar_ocorrencia_com_projeto_inexistente(self):
+        funcionario = Funcionario("Felipe")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 2, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
+
+    def test_criar_ocorrencia_com_id_de_projeto_menor_que_um(self):
+        funcionario = Funcionario("Arthur")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 0, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
+
+    def test_criar_ocorrencia_responsavel_inexistente(self):
+        self.empresa.criar_projeto("Apollo 20")
+        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 1, 2, "TAREFA", "BAIXA", "Limpar Tanque")
+
+    def test_criar_ocorrencia_com_id_de_funcionario_menor_que_um(self):
+        self.empresa.criar_projeto("Desenvolver Debugger")
+        self.assertRaises(Exception, self.empresa.criar_ocorrencia, -1, 2, "TAREFA", "ALTA", "Iniciar desenvolvimento")
+
 if __name__ == '__main__':
     unittest.main()

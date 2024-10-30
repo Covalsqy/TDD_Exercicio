@@ -36,6 +36,8 @@ class Empresa:
         self.dicionario_projetos[id_p].append(funcionario)
 
     def criar_ocorrencia(self, id_p, id_f, tipo, prioridade, resumo):
+        if id_p > len(self.dicionario_projetos) or id_p < 1:
+            raise Exception("Projeto não existe")
         chave = str(id_p) + "_" + str(len(self.dicionario_ocorrencias) + 1)
         nova_o = Ocorrencia(self.get_funcionario(id_f), tipo, prioridade, resumo, chave)
         self.dicionario_ocorrencias[chave] = nova_o
