@@ -1,4 +1,4 @@
-from src.main import Empresa, Funcionario
+from src.main import Empresa, Funcionario, Ocorrencia
 import unittest
 
 class MyTestCase(unittest.TestCase):
@@ -91,6 +91,14 @@ class MyTestCase(unittest.TestCase):
     def test_associar_funcionario_inexistente_a_projeto(self):
         self.empresa.criar_projeto("Refatorar Código")
         self.assertRaises(IndexError, self.empresa.atribuir_funcionario_a_projeto, 1, 1)
+
+    def test_criar_ocorrencia(self):
+        funcionario = Funcionario("Rogério")
+        nova_ocorrencia = Ocorrencia(funcionario, "TAREFA", "BAIXA", "Fazer Documentação")
+        self.assertEqual("TAREFA", nova_ocorrencia.get_tipo())
+        self.assertEqual("BAIXA", nova_ocorrencia.get_prioridade())
+        self.assertEqual("Fazer Documentação", nova_ocorrencia.get_resumo())
+        self.assertEqual(funcionario, nova_ocorrencia.get_responsavel())
 
 if __name__ == '__main__':
     unittest.main()

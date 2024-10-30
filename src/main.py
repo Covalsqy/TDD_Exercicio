@@ -49,3 +49,22 @@ class Projeto:
 
     def get_titulo(self):
         return self.titulo
+
+class Ocorrencia:
+    def __init__(self, resp, tipo, prio, res):
+        self.responsavel = resp
+        self.tipo = tipo
+        self.prioridade = prio
+        self.resumo = res
+
+    def get_responsavel(self):
+        return self.responsavel
+
+    def get_tipo(self):
+        return self.tipo
+
+    def get_prioridade(self):
+        return self.prioridade
+
+    def get_resumo(self):
+        return self.resumo
