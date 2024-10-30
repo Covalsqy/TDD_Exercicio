@@ -94,11 +94,23 @@ class MyTestCase(unittest.TestCase):
 
     def test_criar_ocorrencia(self):
         funcionario = Funcionario("Rogério")
-        nova_ocorrencia = Ocorrencia(funcionario, "TAREFA", "BAIXA", "Fazer Documentação")
+        nova_ocorrencia = Ocorrencia(funcionario, "TAREFA", "BAIXA", "Fazer Documentação", "1_1")
         self.assertEqual("TAREFA", nova_ocorrencia.get_tipo())
         self.assertEqual("BAIXA", nova_ocorrencia.get_prioridade())
         self.assertEqual("Fazer Documentação", nova_ocorrencia.get_resumo())
         self.assertEqual(funcionario, nova_ocorrencia.get_responsavel())
+        self.assertEqual(nova_ocorrencia.get_chave(), "1_1")
+
+    def test_criar_ocorrencia_em_empresa(self):
+        funcionario = Funcionario("Rogério")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "ALTA", "Erro na página inicial")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_responsavel(), funcionario)
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_prioridade(), "ALTA")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_resumo(), "Erro na página inicial")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_tipo(), "BUG")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_chave(), "1_1")
 
 if __name__ == '__main__':
     unittest.main()
