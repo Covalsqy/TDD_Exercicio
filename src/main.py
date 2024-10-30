@@ -46,9 +46,12 @@ class Empresa:
             raise Exception("Projeto não existe")
         if self.lista_funcionarios[id_f-1] not in self.dicionario_projetos[id_p]:
             raise Exception("Funcionário não faz parte do projeto")
+        if self.lista_funcionarios[id_f-1].get_count() == 10:
+            raise Exception("Funcinário atingiu limite de ocorrências")
         chave = str(id_p) + "_" + str(len(self.dicionario_ocorrencias) + 1)
         nova_o = Ocorrencia(self.get_funcionario(id_f), tipo, prioridade, resumo, chave)
         self.dicionario_ocorrencias[chave] = nova_o
+        self.lista_funcionarios[id_f-1].increase_count()
 
     def fechar_ocorrencia(self, chave):
         self.dicionario_ocorrencias[chave].fechar()
@@ -56,24 +59,38 @@ class Empresa:
     def trocar_responsavel_ocorrencia(self, chave_o, novo_res):
         id_p = chave_o.split("_")
         id_p = int(id_p[0])
-        if self.lista_funcionarios[novo_res-1] not in self.dicionario_projetos[id_p]:
-            raise Exception("Funcionário não faz parte do projeto")
-        ocorrencia = self.get_ocorrencia(chave_o)
-        if ocorrencia.get_estado() == "ABERTO":
-            ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
+        if self.lista_funcionarios[novo_res-1].get_count() == 10:
+            raise Exception("Funcinário atingiu limite de ocorrências")
         else:
-            raise Exception("Não pode alterar responsável de ocorrência fechada")
+            if self.lista_funcionarios[novo_res-1] not in self.dicionario_projetos[id_p]:
+                raise Exception("Funcionário não faz parte do projeto")
+            else:
+                ocorrencia = self.get_ocorrencia(chave_o)
+                if ocorrencia.get_estado() == "ABERTO":
+                    ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
+                else:
+                    raise Exception("Não pode alterar responsável de ocorrência fechada")
 
 class Funcionario:
     def __init__(self, name):
         self.nome = name
         self.id = 0
+        self.count = 0
 
     def get_nome(self):
         return self.nome
 
     def get_id(self):
         return self.id
+
+    def get_count(self):
+        return self.count
+
+    def increase_count(self):
+        self.count += 1
+
+    def decrease_count(self):
+        self.count -= 1
 
 class Projeto:
     def __init__(self, t, n):
@@ -113,8 +130,11 @@ class Ocorrencia:
     def fechar(self):
         if self.estado ==  "ABERTO":
             self.estado = "FECHADO"
+            self.responsavel.decrease_count()
         else:
             raise Exception("Ocorrência já foi fechada")
 
     def trocar_responsavel(self, novo_res):
+        self.responsavel.decrease_count()
         self.responsavel = novo_res
+        self.responsavel.increase_count()
