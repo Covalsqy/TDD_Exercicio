@@ -130,5 +130,21 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_projeto("Desenvolver Debugger")
         self.assertRaises(Exception, self.empresa.criar_ocorrencia, -1, 2, "TAREFA", "ALTA", "Iniciar desenvolvimento")
 
+    def test_fechar_ocorrencia(self):
+        funcionario = Funcionario("Greg")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
+        self.empresa.get_ocorrencia("1_1").fechar()
+        self.assertEqual(self.empresa.get_ocorrencia("1_1").get_estado(), "FECHADO")
+
+    def test_fechar_ocorrencia_fechada(self):
+        funcionario = Funcionario("Greg")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
+        self.empresa.get_ocorrencia("1_1").fechar()
+        self.assertRaises(Exception, self.empresa.get_ocorrencia("1_1").fechar)
+
 if __name__ == '__main__':
     unittest.main()

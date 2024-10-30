@@ -68,6 +68,7 @@ class Ocorrencia:
         self.prioridade = prio
         self.resumo = res
         self.chave = c
+        self.estado = "ABERTO"
 
     def get_responsavel(self):
         return self.responsavel
@@ -83,3 +84,12 @@ class Ocorrencia:
 
     def get_chave(self):
         return self.chave
+
+    def get_estado(self):
+        return self.estado
+
+    def fechar(self):
+        if self.estado ==  "ABERTO":
+            self.estado = "FECHADO"
+        else:
+            raise Exception("Ocorrência já foi fechada")
