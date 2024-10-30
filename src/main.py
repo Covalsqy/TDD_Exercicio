@@ -44,6 +44,8 @@ class Empresa:
     def criar_ocorrencia(self, id_p, id_f, tipo, prioridade, resumo):
         if id_p > len(self.dicionario_projetos) or id_p < 1:
             raise Exception("Projeto não existe")
+        if self.lista_funcionarios[id_f-1] not in self.dicionario_projetos[id_p]:
+            raise Exception("Funcionário não faz parte do projeto")
         chave = str(id_p) + "_" + str(len(self.dicionario_ocorrencias) + 1)
         nova_o = Ocorrencia(self.get_funcionario(id_f), tipo, prioridade, resumo, chave)
         self.dicionario_ocorrencias[chave] = nova_o
@@ -52,6 +54,10 @@ class Empresa:
         self.dicionario_ocorrencias[chave].fechar()
 
     def trocar_responsavel_ocorrencia(self, chave_o, novo_res):
+        id_p = chave_o.split("_")
+        id_p = int(id_p[0])
+        if self.lista_funcionarios[novo_res-1] not in self.dicionario_projetos[id_p]:
+            raise Exception("Funcionário não faz parte do projeto")
         ocorrencia = self.get_ocorrencia(chave_o)
         if ocorrencia.get_estado() == "ABERTO":
             ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
