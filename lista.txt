@@ -28,3 +28,25 @@
 
 15 - verficar a exceção de se adicionar um funcionário inxestente a um projeto
 
+16 - criar ocorrência
+
+17- criar ocorrência associada a projeto
+
+18- fechar ocorrência
+
+19- fechar ocorrência já fechada
+
+20- alterar responsável por ocorrência aberta
+
+21- alterar responsável por ocorrência fechada
+
+22- tornar funcionário responsável por 2 ocorrências
+
+23- tornar funcionário responsável por mais de 10 ocorrências abertas
+
+24- tornar funcionário responsável por mais de 10 ocorrências fechadas
+
+25- modificar prioridade de ocorrência aberta
+
+26- modificar prioridade de ocorrência fechada
+
