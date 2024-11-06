@@ -147,7 +147,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
         self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
         self.empresa.fechar_ocorrencia("1_1")
-        self.assertRaises(Exception, self.empresa.fechar_ocorrencia)
+        self.assertRaises(Exception, self.empresa.fechar_ocorrencia, "1_1")
 
     def test_alterar_responsavel_ocorrencia_aberta(self):
         funcionario = Funcionario("Greg")
