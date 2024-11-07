@@ -1,4 +1,12 @@
-from src.main import Empresa, Funcionario, Ocorrencia
+import sys
+import os
+
+# Add the 'src' directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+from empresa import Empresa
+from funcionario import Funcionario
+from ocorrencia import Ocorrencia
+
 import unittest
 
 class MyTestCase(unittest.TestCase):
@@ -40,7 +48,7 @@ class MyTestCase(unittest.TestCase):
     def test_associar_funcionario_ja_associado_a_empresa(self):
         funcionario = Funcionario("Jorge")
         self.empresa.adicionar_funcionario(funcionario)
-        self.assertRaises(Exception, self.empresa.adicionar_funcionario, funcionario)
+        self.assertRaises(PermissionError, self.empresa.adicionar_funcionario, funcionario)
 
     def test_criar_projeto(self):
         self.empresa.criar_projeto("Desenvolver TDD")
@@ -116,20 +124,23 @@ class MyTestCase(unittest.TestCase):
     def test_criar_ocorrencia_com_projeto_inexistente(self):
         funcionario = Funcionario("Felipe")
         self.empresa.adicionar_funcionario(funcionario)
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 2, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 2, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
 
     def test_criar_ocorrencia_com_id_de_projeto_menor_que_um(self):
         funcionario = Funcionario("Arthur")
         self.empresa.adicionar_funcionario(funcionario)
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 0, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 0, 1, "MELHORIA", "MÉDIA", "Refatorar Código")
 
     def test_criar_ocorrencia_responsavel_inexistente(self):
         self.empresa.criar_projeto("Apollo 20")
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 1, 2, "TAREFA", "BAIXA", "Limpar Tanque")
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 1, 2, "TAREFA", "BAIXA", "Limpar Tanque")
 
     def test_criar_ocorrencia_com_id_de_funcionario_menor_que_um(self):
-        self.empresa.criar_projeto("Desenvolver Debugger")
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, -1, 2, "TAREFA", "ALTA", "Iniciar desenvolvimento")
+        funcionario = Funcionario("Greg")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 1, 0, "TAREFA", "ALTA", "Iniciar desenvolvimento")
 
     def test_fechar_ocorrencia(self):
         funcionario = Funcionario("Greg")
@@ -147,7 +158,18 @@ class MyTestCase(unittest.TestCase):
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
         self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
         self.empresa.fechar_ocorrencia("1_1")
-        self.assertRaises(Exception, self.empresa.fechar_ocorrencia, "1_1")
+        self.assertRaises(PermissionError, self.empresa.fechar_ocorrencia, "1_1")
+
+    def test_funcionario_uma_ocorrencia_a_menos_apos_ocorrencia_fechada(self):
+        funcionario = Funcionario("Greg")
+        self.empresa.criar_projeto("TDD")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "MÉDIA", "Identificar causa de querrie não funcionar")
+        qntd_ocorr_funcionario_antes = self.empresa.get_funcionario(1).get_count()
+        self.empresa.fechar_ocorrencia("1_1")
+        qntd_ocorr_funcionario_depois = self.empresa.get_funcionario(1).get_count()
+        self.assertEqual(qntd_ocorr_funcionario_depois, qntd_ocorr_funcionario_antes - 1)
 
     def test_alterar_responsavel_ocorrencia_aberta(self):
         funcionario = Funcionario("Greg")
@@ -171,15 +193,15 @@ class MyTestCase(unittest.TestCase):
         self.empresa.atribuir_funcionario_a_projeto(2, 1)
         self.empresa.criar_ocorrencia(1, 1, "BUG", "BAIXA", "Concertar impressora")
         self.empresa.fechar_ocorrencia("1_1")
-        self.assertRaises(Exception, self.empresa.trocar_responsavel_ocorrencia, "1_1", 2)
+        self.assertRaises(PermissionError, self.empresa.trocar_responsavel_ocorrencia, "1_1", 2)
 
-    def test_responsavel_e_ocorrencia_em_projetos_diferentes(self):
+    def test_criar_ocorrencia_com_funcionario_e_projeto_nao_conectados(self):
         funcionario = Funcionario("Amanda")
         self.empresa.criar_projeto("Alpha")
         self.empresa.criar_projeto("Omega")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 2, 1, "MELHORIA", "ALTA", "Experiência do Usuário")
+        self.assertRaises(PermissionError, self.empresa.criar_ocorrencia, 2, 1, "MELHORIA", "ALTA", "Experiência do Usuário")
 
     def test_alterar_responsavel_por_ocorrencia_em_projeto_diferente(self):
         funcionario = Funcionario("Amanda")
@@ -191,7 +213,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.atribuir_funcionario_a_projeto(1, 2)
         self.empresa.atribuir_funcionario_a_projeto(2, 1)
         self.empresa.criar_ocorrencia(2, 1, "TAREFA", "BAIXA", "Calcular salários")
-        self.assertRaises(Exception, self.empresa.trocar_responsavel_ocorrencia,"2_1", 2)
+        self.assertRaises(PermissionError, self.empresa.trocar_responsavel_ocorrencia,"2_1", 2)
 
     def test_criar_duas_ocorrencias_mesmo_funcionario(self):
         funcionario = Funcionario("Clara")
@@ -203,6 +225,53 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(self.empresa.get_responsavel("1_1"), funcionario)
         self.assertEqual(self.empresa.get_responsavel("1_2"), funcionario)
 
+    def test_criar_mais_de_uma_ocorrencia_em_projeto(self):
+        funcionario = Funcionario("Clara")
+        self.empresa.criar_projeto("Delta")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        occor1 = self.empresa.criar_ocorrencia(1, 1, "TAREFA", "BAIXA", "Calcular salários")
+        occor2 = self.empresa.criar_ocorrencia(1, 1, "BUG", "ALTA", "Transações incorretas")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1"), occor1)
+        self.assertEqual(self.empresa.get_ocorrencia("1_2"), occor2)
+
+    def test_criar_duas_ocorrencias_iguais_no_mesmo_projeto(self):
+        funcionario = Funcionario("Clara")
+        self.empresa.criar_projeto("Delta")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.criar_ocorrencia(1, 1, "BUG", "ALTA", "Transações incorretas")
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 1, 1, "BUG", "ALTA", "Transações incorretas")
+
+    def test_criar_ocorrencias_iguais_em_projetos_diferentes(self):
+        funcionario = Funcionario("Clara")
+        self.empresa.criar_projeto("Delta")
+        self.empresa.criar_projeto("Omega")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.empresa.atribuir_funcionario_a_projeto(1, 2)
+        occor1 = self.empresa.criar_ocorrencia(1, 1, "BUG", "ALTA", "Transações incorretas")
+        occor2 = self.empresa.criar_ocorrencia(2, 1, "BUG", "ALTA", "Transações incorretas")
+        self.assertEqual(self.empresa.get_ocorrencia("1_1"), occor1)
+        self.assertEqual(self.empresa.get_ocorrencia("2_2"), occor2)
+
+    def test_criar_diferente_tipo_ocorrencia(self):
+        funcionario = Funcionario("Clara")
+        self.empresa.criar_projeto("Delta")
+        self.empresa.criar_projeto("Omega")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 1, 1, "CORREÇÃO", "ALTA", "Transações Proibidas")
+
+    def test_criar_diferente_prioridade_ocorrencia(self):
+        funcionario = Funcionario("Clara")
+        self.empresa.criar_projeto("Delta")
+        self.empresa.criar_projeto("Omega")
+        self.empresa.adicionar_funcionario(funcionario)
+        self.empresa.atribuir_funcionario_a_projeto(1, 1)
+        self.assertRaises(ValueError, self.empresa.criar_ocorrencia, 1, 1, "BUG", "ALTÍSSIMA", "Transações Proibidas")
+
+
     def test_criar_mais_de_dez_ocorrencias_mesmo_funcionario(self):
         funcionario = Funcionario("Clara")
         self.empresa.criar_projeto("Delta")
@@ -210,6 +279,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
         self.empresa.criar_ocorrencia(1, 1, "TAREFA", "BAIXA", "Calcular salários")
         self.empresa.criar_ocorrencia(1, 1, "BUG", "ALTA", "Transações incorretas")
+        # setup
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "AAA")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "BBB")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "CCC")
@@ -218,7 +288,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "FFF")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "GGG")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "HHH")
-        self.assertRaises(Exception, self.empresa.criar_ocorrencia, 1, 1, "MELHORIA", "MÉDIA", "III")
+        self.assertRaises(PermissionError, self.empresa.criar_ocorrencia, 1, 1, "MELHORIA", "MÉDIA", "III")
 
     def test_criar_mais_de_dez_ocorrencias_fechando_duas_mesmo_funcionario(self):
         funcionario = Funcionario("Clara")
@@ -259,7 +329,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "GGG")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "HHH")
         self.empresa.criar_ocorrencia(1, 1, "MELHORIA", "MÉDIA", "III")
-        self.assertRaises(Exception, self.empresa.trocar_responsavel_ocorrencia,"1_1", 1)
+        self.assertRaises(PermissionError, self.empresa.trocar_responsavel_ocorrencia,"1_1", 1)
 
     def test_testar_contagem_de_ocorrencias_durante_troca_de_responsaveis(self):
         funcionario = Funcionario("Clara")
@@ -281,7 +351,7 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_projeto("Psi")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
-        self.empresa.criar_ocorrencia(1, 1, "Tarefa", "BAIXA", "Prioridade Incorreta")
+        self.empresa.criar_ocorrencia(1, 1, "TAREFA", "BAIXA", "Prioridade Incorreta")
         self.empresa.alterar_prioridade("1_1", "ALTA")
         self.assertEqual(self.empresa.get_prioridade_ocorrencia("1_1"), "ALTA")
 
@@ -290,9 +360,9 @@ class MyTestCase(unittest.TestCase):
         self.empresa.criar_projeto("Psi")
         self.empresa.adicionar_funcionario(funcionario)
         self.empresa.atribuir_funcionario_a_projeto(1, 1)
-        self.empresa.criar_ocorrencia(1, 1, "Tarefa", "BAIXA", "Prioridade Incorreta")
+        self.empresa.criar_ocorrencia(1, 1, "TAREFA", "BAIXA", "Prioridade Incorreta")
         self.empresa.fechar_ocorrencia("1_1")
-        self.assertRaises(Exception, self.empresa.alterar_prioridade,"1_1", "ALTA")
+        self.assertRaises(PermissionError, self.empresa.alterar_prioridade,"1_1", "ALTA")
 
 if __name__ == '__main__':
     unittest.main()
