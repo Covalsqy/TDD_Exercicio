@@ -1,3 +1,6 @@
+from projeto import Projeto
+from ocorrencia import Ocorrencia
+
 class Empresa:
     def __init__(self, name):
         self.nome = name
@@ -32,7 +35,7 @@ class Empresa:
             f.id = len(self.lista_funcionarios) + 1
             self.lista_funcionarios.append(f)
         else:
-            raise Exception("Funcionário já está na empresa")
+            raise PermissionError("Funcionário já está na empresa")
 
     def criar_projeto(self, p):
         id = len(self.dicionario_projetos) + 1
@@ -46,15 +49,23 @@ class Empresa:
 
     def criar_ocorrencia(self, id_p, id_f, tipo, prioridade, resumo):
         if id_p > len(self.dicionario_projetos) or id_p < 1:
-            raise Exception("Projeto não existe")
+            raise ValueError("Projeto não existe")
+        if id_f > len(self.lista_funcionarios) or id_f < 1:
+            raise ValueError("Funcionário não existe")
         if self.lista_funcionarios[id_f-1] not in self.dicionario_projetos[id_p]:
-            raise Exception("Funcionário não faz parte do projeto")
+            raise PermissionError("Funcionário não faz parte do projeto")
         if self.lista_funcionarios[id_f-1].get_count() == 10:
-            raise Exception("Funcinário atingiu limite de ocorrências")
+            raise PermissionError("Funcinário atingiu limite de ocorrências")
         chave = str(id_p) + "_" + str(len(self.dicionario_ocorrencias) + 1)
         nova_o = Ocorrencia(self.get_funcionario(id_f), tipo, prioridade, resumo, chave)
+        
+        for key in self.dicionario_ocorrencias:
+            if nova_o.get_responsavel() == self.dicionario_ocorrencias[key].get_responsavel() and nova_o.get_tipo() == self.dicionario_ocorrencias[key].get_tipo() and nova_o.get_prioridade() == self.dicionario_ocorrencias[key].get_prioridade() and nova_o.get_resumo() == self.dicionario_ocorrencias[key].get_resumo() and key[0] == chave[0]:
+                raise ValueError("Não pode criar uma ocorrência igual a uma já existente no mesmo projeto")    
+    
         self.dicionario_ocorrencias[chave] = nova_o
         self.lista_funcionarios[id_f-1].increase_count()
+        return nova_o
 
     def fechar_ocorrencia(self, chave):
         self.dicionario_ocorrencias[chave].fechar()
@@ -63,90 +74,19 @@ class Empresa:
         id_p = chave_o.split("_")
         id_p = int(id_p[0])
         if self.lista_funcionarios[novo_res-1].get_count() == 10:
-            raise Exception("Funcinário atingiu limite de ocorrências")
+            raise PermissionError("Funcinário atingiu limite de ocorrências")
         else:
             if self.lista_funcionarios[novo_res-1] not in self.dicionario_projetos[id_p]:
-                raise Exception("Funcionário não faz parte do projeto")
+                raise PermissionError("Funcionário não faz parte do projeto")
             else:
                 ocorrencia = self.get_ocorrencia(chave_o)
                 if ocorrencia.get_estado() == "ABERTO":
                     ocorrencia.trocar_responsavel(self.lista_funcionarios[novo_res-1])
                 else:
-                    raise Exception("Não pode alterar responsável de ocorrência fechada")
+                    raise PermissionError("Não pode alterar responsável de ocorrência fechada")
 
     def alterar_prioridade(self, chave, p):
         if self.get_ocorrencia(chave).get_estado() == "ABERTO":
             self.get_ocorrencia(chave).set_prioridade(p)
         else:
-            raise Exception("Não pode alterar prioridade de ocorrencia fechada")
-
-class Funcionario:
-    def __init__(self, name):
-        self.nome = name
-        self.id = 0
-        self.count = 0
-
-    def get_nome(self):
-        return self.nome
-
-    def get_id(self):
-        return self.id
-
-    def get_count(self):
-        return self.count
-
-    def increase_count(self):
-        self.count += 1
-
-    def decrease_count(self):
-        self.count -= 1
-
-class Projeto:
-    def __init__(self, t, n):
-        self.titulo = t
-        self.id = n
-
-    def get_titulo(self):
-        return self.titulo
-
-class Ocorrencia:
-    def __init__(self, resp, tipo, prio, res, c):
-        self.responsavel = resp
-        self.tipo = tipo
-        self.prioridade = prio
-        self.resumo = res
-        self.chave = c
-        self.estado = "ABERTO"
-
-    def get_responsavel(self):
-        return self.responsavel
-
-    def get_tipo(self):
-        return self.tipo
-
-    def get_prioridade(self):
-        return self.prioridade
-
-    def get_resumo(self):
-        return self.resumo
-
-    def get_chave(self):
-        return self.chave
-
-    def get_estado(self):
-        return self.estado
-
-    def fechar(self):
-        if self.estado ==  "ABERTO":
-            self.estado = "FECHADO"
-            self.responsavel.decrease_count()
-        else:
-            raise Exception("Ocorrência já foi fechada")
-
-    def trocar_responsavel(self, novo_res):
-        self.responsavel.decrease_count()
-        self.responsavel = novo_res
-        self.responsavel.increase_count()
-
-    def set_prioridade(self, p):
-        self.prioridade = p
+            raise PermissionError("Não pode alterar prioridade de ocorrencia fechada")
